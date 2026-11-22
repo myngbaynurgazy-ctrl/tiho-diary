@@ -68,6 +68,32 @@ function applyAtmosphere(element, input) {
   element.dataset.music = (atmosphere.musicTexture || '').toLocaleLowerCase('ru-RU').includes('ambient') ? 'ambient' : input.song || input.audio ? 'rhythm' : 'silence';
   return atmosphere;
 }
+const demoMemories = [
+  {
+    id: 'demo-river-walk', isExample: true, date: '2026-11-20T18:20:00.000Z', displayDate: '20.11.26', dayName: 'пятница',
+    title: 'Домой пешком вдоль реки',
+    story: 'Автобус уже ушёл, и я пошла оставшиеся остановки пешком. У воды пахло мокрым камнем, а свет в окнах отражался длинными полосами. Дошла медленно и впервые за неделю не проверяла время.',
+    mood: 'Тихое', song: 'Glass', songArtist: 'Hania Rani', songGenre: 'неоклассика',
+    songLink: 'https://music.apple.com/search?term=Hania%20Rani%20Glass',
+    photos: ['./examples/river-walk.svg'], background: './examples/river-walk.svg'
+  },
+  {
+    id: 'demo-rain-tea', isExample: true, date: '2026-11-18T17:40:00.000Z', displayDate: '18.11.26', dayName: 'среда',
+    title: 'Чай и дождь у окна',
+    story: 'Заскочила к подруге всего на полчаса. Поставили чайник, достали печенье, и разговор растянулся на весь вечер. За окном шёл дождь, а домой уже совсем не хотелось.',
+    mood: 'Тёплое', song: 'Show Me How', songArtist: 'Men I Trust', songGenre: 'dream pop',
+    songLink: 'https://music.apple.com/search?term=Men%20I%20Trust%20Show%20Me%20How',
+    photos: ['./examples/rain-tea.svg'], background: './examples/rain-tea.svg'
+  },
+  {
+    id: 'demo-project-night', isExample: true, date: '2026-11-16T20:55:00.000Z', displayDate: '16.11.26', dayName: 'понедельник',
+    title: 'Пять минут до отправки',
+    story: 'Мы отправили презентацию за минуту до дедлайна, вышли из аудитории и долго смеялись от облегчения. По дороге домой музыка в наушниках казалась громче обычного, а город — ярче.',
+    mood: 'Волнительное', song: 'Midnight City', songArtist: 'M83', songGenre: 'синт-поп',
+    songLink: 'https://music.apple.com/search?term=M83%20Midnight%20City',
+    photos: ['./examples/project-night.svg'], background: './examples/project-night.svg'
+  }
+].map(memory => Object.assign(memory, atmosphereFor(memory)));
 try { memories = JSON.parse(localStorage.getItem('tiho-memories') || '[]'); } catch { memories = []; }
 
 function updatePreview() {
@@ -177,39 +203,44 @@ $('footerYear').textContent = currentDate.getFullYear();
 function renderArchive() {
   const grid = $('archiveGrid'); grid.replaceChildren();
   const query = ($('archiveSearch')?.value || '').trim().toLocaleLowerCase('ru-RU');
-  const matches = memories.filter(memory => !query || [memory.title, memory.story, memory.song, memory.songArtist, memory.songGenre, memory.motifName, memory.signature, memory.mood, memory.displayDate].join(' ').toLocaleLowerCase('ru-RU').includes(query));
-  $('archiveResultCount').textContent = query ? `${matches.length} из ${memories.length}` : '';
+  const showingExamples = memories.length === 0;
+  const archiveItems = showingExamples ? demoMemories : memories;
+  const matches = archiveItems.filter(memory => !query || [memory.title, memory.story, memory.song, memory.songArtist, memory.songGenre, memory.motifName, memory.signature, memory.mood, memory.displayDate].join(' ').toLocaleLowerCase('ru-RU').includes(query));
+  $('archiveDemoNote').classList.toggle('hidden', !showingExamples);
+  $('archiveDemoNote').textContent = showingExamples ? 'Три примера из жизни · они не сохраняются в твоём личном архиве' : '';
+  $('archiveResultCount').textContent = query ? (showingExamples ? `${matches.length} из ${demoMemories.length} примеров` : `${matches.length} из ${memories.length}`) : '';
   $('emptyArchive').classList.toggle('hidden', matches.length > 0);
-  if (!memories.length) { $('emptyArchive').querySelector('h3').textContent='Здесь будут жить твои дни'; $('emptyArchive').querySelector('p').textContent='Сохрани первое воспоминание — оно появится в своей папке.'; }
+  if (!matches.length && !query && !memories.length) { $('emptyArchive').querySelector('h3').textContent='Примеры дней загружаются'; $('emptyArchive').querySelector('p').textContent='Попробуй открыть архив ещё раз.'; }
   else if (!matches.length) { $('emptyArchive').querySelector('h3').textContent='Такого дня пока не нашлось'; $('emptyArchive').querySelector('p').textContent='Попробуй другое слово: историю, песню, образ или дату.'; }
   matches.forEach(memory => {
-    const card = document.createElement('article'); card.className='archive-card'; card.tabIndex=0;
+    const card = document.createElement('article'); card.className=`archive-card${memory.isExample ? ' archive-card-example' : ''}`; card.tabIndex=0;
     const cover = document.createElement('div'); cover.className=`archive-card-image ${moodClasses[memory.mood] || 'mood-own'}`; applyAtmosphere(cover, memory); if (memory.background || memory.photos?.[0]) cover.style.backgroundImage=`url("${memory.background || memory.photos[0]}")`;
     const loops = document.createElement('span'); loops.className='color-loops'; loops.setAttribute('aria-hidden','true');
     const title = document.createElement('span'); title.textContent = memory.title || memory.story?.split(/[.!?\n]/)[0].slice(0,46) || 'День, который остался'; cover.append(loops,title);
+    if (memory.isExample) { const badge=document.createElement('span'); badge.className='archive-example-badge'; badge.textContent='ПРИМЕР ДНЯ'; cover.append(badge); }
     const body = document.createElement('div'); body.className='archive-card-body';
     const date = document.createElement('div'); date.className='archive-card-date'; date.textContent=`${memory.displayDate} · ${memory.dayName}`;
     const desc = document.createElement('p'); desc.textContent=memory.story || 'Название, фото и музыка сохранили атмосферу этого дня.';
-    const tags = document.createElement('div'); tags.className='archive-card-tags'; tags.innerHTML=`<span>♡ ${escapeHtml(memory.mood)}</span><span>✳ ${escapeHtml(memory.motifName || atmosphereFor(memory).motifName)}</span><span>${memory.song || memory.audio ? '♫ музыка' : '✳ воспоминание'}</span>`;
+    const tags = document.createElement('div'); tags.className='archive-card-tags'; tags.innerHTML=`${memory.isExample ? '<span>✳ пример</span>' : ''}<span>♡ ${escapeHtml(memory.mood)}</span><span>✳ ${escapeHtml(memory.motifName || atmosphereFor(memory).motifName)}</span><span>${memory.song || memory.audio ? '♫ музыка' : '✳ воспоминание'}</span>`;
     body.append(date,desc,tags); card.append(cover,body); card.addEventListener('click',()=>openMemory(memory)); card.addEventListener('keydown',e=>{if(e.key==='Enter')openMemory(memory)}); grid.append(card);
   });
 }
 $('archiveSearch')?.addEventListener('input', renderArchive);
 function escapeHtml(value='') { return value.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 async function openMemory(m) {
-  editingMemoryId=m.id;
+  editingMemoryId=m.isExample ? null : m.id;
   const hero = document.createElement('div'); hero.className=`modal-hero ${moodClasses[m.mood] || 'mood-own'}`; applyAtmosphere(hero, m); if (m.background || m.photos?.[0]) hero.style.backgroundImage=`url("${m.background || m.photos[0]}")`;
   const loops = document.createElement('span'); loops.className='color-loops'; loops.setAttribute('aria-hidden','true');
   const title = document.createElement('span'); title.className='masked-heading'; title.textContent=m.title || m.story?.split(/[.!?\n]/)[0].slice(0,58) || 'Этот день'; hero.append(loops,title);
-  const changeBg=document.createElement('button');changeBg.type='button';changeBg.className='archive-background-button';changeBg.textContent='Сменить фон';changeBg.onclick=()=>$('backgroundInput').click();hero.append(changeBg);
-  const date=document.createElement('div');date.className='modal-date';date.textContent=`${m.displayDate} · ${m.dayName}`;
+  if (!m.isExample) { const changeBg=document.createElement('button');changeBg.type='button';changeBg.className='archive-background-button';changeBg.textContent='Сменить фон';changeBg.onclick=()=>$('backgroundInput').click();hero.append(changeBg); }
+  const date=document.createElement('div');date.className='modal-date';date.textContent=`${m.isExample ? 'ПРИМЕР · ' : ''}${m.displayDate} · ${m.dayName}`;
   const h=document.createElement('h2');h.textContent=m.title || 'Так ощущался этот день';
   const text=document.createElement('div');text.className='modal-story';text.textContent=m.story;
   const meta=document.createElement('div');meta.className='modal-meta';meta.textContent=`♡ ${m.mood}${m.song ? '   ·   ♫ '+m.song : ''}`;
   const songLink = document.createElement('a'); songLink.className = 'saved-song-link'; songLink.textContent = 'Открыть песню в Apple Music ↗';
   songLink.href = m.songLink || '#'; songLink.target = '_blank'; songLink.rel = 'noopener noreferrer'; songLink.hidden = !m.songLink;
   const choices=document.createElement('div');choices.className='modal-photo-choices';
-  (m.photos||[]).forEach(src=>{const img=document.createElement('img');img.src=src;img.className=`modal-photo-choice ${(m.background||m.photos?.[0])===src?'selected':''}`;img.title='Сделать фоном';img.onclick=()=>{m.background=src;saveMemories();renderArchive();openMemory(m)};choices.append(img)});
+  if (!m.isExample) (m.photos||[]).forEach(src=>{const img=document.createElement('img');img.src=src;img.className=`modal-photo-choice ${(m.background||m.photos?.[0])===src?'selected':''}`;img.title='Сделать фоном';img.onclick=()=>{m.background=src;saveMemories();renderArchive();openMemory(m)};choices.append(img)});
   $('modalBody').querySelectorAll('audio').forEach(player => { player.pause(); player.removeAttribute('src'); });
   if (activeModalAudioUrl) window.tihoMusic?.releaseAudioUrl(activeModalAudioUrl);
   activeModalAudioUrl = '';

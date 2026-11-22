@@ -1068,3 +1068,7 @@ html[data-theme="light"] .preview-song b{color:#2b302a}
 html[data-theme="light"] .preview-song small{color:#6d756c}
 html[data-theme="light"] .play-button{border-color:#ded9ce;background:#f5f1ea;color:#7b805a}
 @media(prefers-reduced-motion:reduce){.preview-details,.play-button{transition:none}.play-button:hover{transform:none}}
+.archive-demo-note{margin:0 0 15px;padding:12px 15px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;background:color-mix(in srgb,var(--paper) 72%,var(--sage));color:var(--ink);font-size:11px;line-height:1.5}
+.archive-example-badge{top:12px;right:12px;bottom:auto!important;left:auto!important;z-index:3;border:1px solid #ffffff77;border-radius:999px;padding:6px 9px;background:#18231edb;color:#fff!important;font:600 8px var(--sans)!important;letter-spacing:.1em;backdrop-filter:blur(8px)}
+.archive-card-example .archive-card-image{background-size:cover;background-position:center}
+@media(prefers-reduced-motion:reduce){.archive-card-example{transition:none}}
