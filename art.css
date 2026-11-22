@@ -1048,3 +1048,23 @@ html,body{background-color:var(--paper);color:var(--ink);transition:background-c
 html[data-theme="dark"] .topbar{box-shadow:0 8px 24px rgba(0,0,0,.12)}
 html[data-theme="light"] .topbar{box-shadow:0 8px 24px rgba(50,45,35,.05)}
 @media(prefers-reduced-motion:reduce){html,body,.topbar,.header-brand,.header-link,.account-button,.theme-toggle{transition:none}}
+
+/* Give the music strip its own readable surface instead of a fixed beige panel. */
+.preview-details{padding:17px 19px 16px;border-top:1px solid var(--line);background:#fbfaf6;color:var(--ink);transition:background-color .3s ease,border-color .3s ease,color .3s ease}
+.detail-label{color:#687269;font-size:9px;font-weight:600;letter-spacing:.12em}
+.preview-song{margin-top:11px}
+.preview-song b{color:var(--ink);line-height:1.4}
+.preview-song small{color:var(--muted);line-height:1.4}
+.play-button{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--paper) 70%,transparent);color:var(--accent);transition:background-color .24s ease,border-color .24s ease,color .24s ease,transform .24s ease}
+.play-button:hover{transform:scale(1.06)}
+html[data-theme="dark"] .preview-details{background:#22272e;border-top-color:#414b4c;color:#f1f0e7}
+html[data-theme="dark"] .detail-label{color:#c2c8c3}
+html[data-theme="dark"] .preview-song b{color:#f1f0e7}
+html[data-theme="dark"] .preview-song small{color:#bdc6c1}
+html[data-theme="dark"] .play-button{border-color:#4c5854;background:#303a37;color:#f0d178}
+html[data-theme="light"] .preview-details{background:#fbfaf6;border-top-color:#e4ded3;color:#2b302a}
+html[data-theme="light"] .detail-label{color:#687269}
+html[data-theme="light"] .preview-song b{color:#2b302a}
+html[data-theme="light"] .preview-song small{color:#6d756c}
+html[data-theme="light"] .play-button{border-color:#ded9ce;background:#f5f1ea;color:#7b805a}
+@media(prefers-reduced-motion:reduce){.preview-details,.play-button{transition:none}.play-button:hover{transform:none}}
