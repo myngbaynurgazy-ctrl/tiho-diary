@@ -254,6 +254,7 @@ html[data-theme="light"] .archive-card-image:after,html[data-theme="light"] .mod
 
 /* 60 / 30 / 10 palette roles: page, raised surfaces, and focused accent. */
 html[data-theme="dark"]{
+  color-scheme:dark;
   --color-main:#20232a;
   --color-secondary:#30343d;
   --color-accent:#e3ad3d;
@@ -290,6 +291,7 @@ html[data-theme="dark"] .song-input-wrap button{background:#3a3934;color:#e8c86e
 html[data-theme="dark"] .cover-choice:after{background:var(--color-accent);color:#24221c}
 
 html[data-theme="light"]{
+  color-scheme:light;
   --color-main:#d4d3ce;
   --color-secondary:#e0dfd9;
   --color-accent:#a87512;
@@ -1017,3 +1019,32 @@ button,a,.editor-card,.memory-preview,.archive-card,.weather-note,.upload-zone,.
 button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(max-width:650px){html[data-theme="dark"] .page-footer{grid-template-rows:180px auto auto auto auto}}
 @media(prefers-reduced-motion:reduce){#todayView:not(.hidden),#archiveView:not(.hidden){animation:none}button,a,.editor-card,.memory-preview,.archive-card,.weather-note,.upload-zone,.song-input-wrap{transition:none}}
+
+/* Keep the sticky header, page canvas, and text on the same theme tokens. */
+html[data-theme="dark"]{
+  --paper:#242a33;
+  --ink:#f1f0e7;
+  --muted:#c2c8c3;
+  --line:#45515c;
+  --green:#a8ce8d;
+  --sage:#355d49;
+  --color-main:#242a33;
+}
+html[data-theme="light"]{
+  --paper:#f5f1ea;
+  --ink:#2b302a;
+  --muted:#77796f;
+  --line:#e4ded3;
+  --green:#526d50;
+  --sage:#e5ebe2;
+  --color-main:#f5f1ea;
+  --color-secondary:#fbfaf7;
+  --color-border:#e4ded3;
+}
+html,body{background-color:var(--paper);color:var(--ink);transition:background-color .32s ease,color .32s ease}
+.topbar{background-color:color-mix(in srgb,var(--paper) 92%,transparent);border-bottom-color:var(--line);transition:background-color .32s ease,border-color .32s ease,box-shadow .32s ease,color .32s ease}
+.header-brand,.header-link,.account-button,.theme-toggle{transition:background-color .28s ease,color .28s ease,border-color .28s ease,box-shadow .28s ease,transform .28s ease}
+.page-footer,.footer-brand,.circuit-stat,.circuit-archive-action{transition:color .28s ease,background-color .28s ease,border-color .28s ease,box-shadow .28s ease}
+html[data-theme="dark"] .topbar{box-shadow:0 8px 24px rgba(0,0,0,.12)}
+html[data-theme="light"] .topbar{box-shadow:0 8px 24px rgba(50,45,35,.05)}
+@media(prefers-reduced-motion:reduce){html,body,.topbar,.header-brand,.header-link,.account-button,.theme-toggle{transition:none}}
